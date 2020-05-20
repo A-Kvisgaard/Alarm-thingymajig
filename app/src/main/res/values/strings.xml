@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Alarm</string>
+    <string name="alarm_on_text">Alarm is on</string>
+    <string name="alarm_off_text">Alarm is off</string>
+    <string name="alarm_on_button">Turn alarm on</string>
+    <string name="alarm_off_button">Turn alarm off</string>
 </resources>
