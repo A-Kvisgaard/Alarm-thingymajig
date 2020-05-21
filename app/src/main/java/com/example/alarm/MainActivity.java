@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void viewItemOnClick(View v){
-        Log.i("View clicked", "EYE");
+        int pos = rvAlarms.getChildAdapterPosition(v);
+        Alarm clicked = alarms.get(pos);
+        Toast.makeText(this, clicked.toString(), Toast.LENGTH_LONG).show();
+        //TODO Open edit activity
     }
+
 }
