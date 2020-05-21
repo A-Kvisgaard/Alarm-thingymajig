@@ -6,19 +6,26 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
-
+@Entity
 public class Alarm implements Comparable, Serializable {
+    @Ignore
+    public static final int ID_NOT_SET = 0;//primary key treated as not set when 0
 
-    public static final int ID_NOT_SET = -1;
-
+    @PrimaryKey(autoGenerate = true)
     private int id;
+
     private long time;
     private boolean on;
     private String text;
 
-    int hour = Calendar.HOUR_OF_DAY;
-    int min = Calendar.MINUTE;
+    @Ignore
+    private int hour = Calendar.HOUR_OF_DAY;
+    @Ignore
+    private int min = Calendar.MINUTE;
 
     public Alarm(int id, long time, String text, boolean on){
         this.id = id;
