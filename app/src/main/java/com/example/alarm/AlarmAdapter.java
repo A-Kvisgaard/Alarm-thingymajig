@@ -59,7 +59,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         TextView infoTV = holder.alarmInfoTextView;
         Context context = holder.itemView.getContext();
         String next = alarm.today() ? context.getString(R.string.today) : context.getString(R.string.tomorrow);
-        infoTV.setText(alarm.getText() + next);
+        infoTV.setText(next + "  " + alarm.getText());
 
         Switch onSwitch = holder.onSwitch;
         onSwitch.setChecked(alarm.isOn());

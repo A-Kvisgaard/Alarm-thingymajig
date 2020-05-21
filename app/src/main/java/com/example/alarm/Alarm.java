@@ -6,6 +6,7 @@ import java.util.Calendar;
 
 import androidx.annotation.NonNull;
 
+
 public class Alarm implements Comparable{
     private int id;
     private long time;
@@ -56,7 +57,7 @@ public class Alarm implements Comparable{
     }
 
     public String getText() {
-        return text+" ";
+        return text;
     }
 
     public static ArrayList<Alarm> createAlarmList(int numAlarms){
@@ -65,7 +66,7 @@ public class Alarm implements Comparable{
 
         for (int i = 0; i <= numAlarms -1; i++){
             long alarmTime = now + i *(60*60*1000);//Add an hour per alarm
-            Alarms.add(new Alarm(i, alarmTime,":::::LOREM IPSUM:::::", false));
+            Alarms.add(new Alarm(i, alarmTime,":::::LOREM IPSUM::::::::::LOREM IPSUM::::::::::LOREM IPSUM::::::::::LOREM IPSUM::::::::::LOREM IPSUM:::::", false));
         }
 
         return Alarms;
@@ -80,21 +81,6 @@ public class Alarm implements Comparable{
     @Override
     public int compareTo(Object o) {
         Alarm other_alarm = (Alarm) o;
-        int hour = Calendar.HOUR_OF_DAY;
-        int min = Calendar.MINUTE;
-
-        Calendar alarmTime = Calendar.getInstance();
-        alarmTime.setTimeInMillis(time);
-        Calendar other = Calendar.getInstance();
-        other.setTimeInMillis(other_alarm.getTime());
-        if (alarmTime.get(hour) < other.get(hour)){
-            return -1;
-        } else if (alarmTime.get(hour) == other.get(hour)){
-            if (alarmTime.get(min) < other.get(min)){
-                return -1;
-            }
-            return 1;
-        }
-        return 1;
+        return this.getTimeString().compareTo(other_alarm.getTimeString());
     }
 }
