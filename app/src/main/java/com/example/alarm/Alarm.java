@@ -1,5 +1,6 @@
 package com.example.alarm;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -7,17 +8,35 @@ import java.util.Calendar;
 import androidx.annotation.NonNull;
 
 
-public class Alarm implements Comparable{
+public class Alarm implements Comparable, Serializable {
+
+    public static final int ID_NOT_SET = -1;
+
     private int id;
     private long time;
     private boolean on;
     private String text;
+
+    int hour = Calendar.HOUR_OF_DAY;
+    int min = Calendar.MINUTE;
 
     public Alarm(int id, long time, String text, boolean on){
         this.id = id;
         this.time = time;
         this.text = text;
         this.on = on;
+    }
+    public int getHour(){
+        Calendar alarmTime = Calendar.getInstance();
+        alarmTime.setTimeInMillis(time);
+
+        return alarmTime.get(hour);
+    }
+    public int getMinute(){
+        Calendar alarmTime = Calendar.getInstance();
+        alarmTime.setTimeInMillis(time);
+
+        return alarmTime.get(min);
     }
 
     public int getId() {
@@ -36,9 +55,6 @@ public class Alarm implements Comparable{
     }
 
     public boolean today (){
-        int hour = Calendar.HOUR_OF_DAY;
-        int min = Calendar.MINUTE;
-
         Calendar alarmTime = Calendar.getInstance();
         alarmTime.setTimeInMillis(time);
         Calendar now = Calendar.getInstance();
