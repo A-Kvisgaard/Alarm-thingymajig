@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Alarm</string>
+    <string name="weather_weather">The Weather Outside</string>
+    <string name="weather_temperature">The Temperature</string>
 </resources>
