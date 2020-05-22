@@ -61,6 +61,14 @@ public class Alarm implements Comparable, Serializable {
         return DateFormat.getTimeInstance(DateFormat.SHORT).format(time);
     }
 
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
     public boolean today (){
         Calendar alarmTime = Calendar.getInstance();
         alarmTime.setTimeInMillis(time);
@@ -76,6 +84,7 @@ public class Alarm implements Comparable, Serializable {
 
     public void toggle(){
         on = !on;
+        //dao.updateAlarm(this);
         //TODO Cancel/start alarm
     }
 

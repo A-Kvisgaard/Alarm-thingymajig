@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,8 +23,10 @@ public class MainActivity extends AppCompatActivity {
 
     Button buttonNewAlarm;
     RecyclerView rvAlarms;
+    AlarmAdapter adapter;
 
-    ArrayList<Alarm> alarms;
+    Context context;
+    List<Alarm> alarms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +43,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        alarms = Alarm.createAlarmList(40);
-        Collections.sort(alarms);
-
-        AlarmAdapter adapter = new AlarmAdapter(alarms);
-        rvAlarms.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        context = this;
+        adapter = new AlarmAdapter(new ArrayList<Alarm>());
+        rvAlarms.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
         rvAlarms.setAdapter(adapter);
-        rvAlarms.setLayoutManager(new LinearLayoutManager(this));
+        rvAlarms.setLayoutManager(new LinearLayoutManager(context));
+
+        new DBTasks(context).getAll(adapter);
 
     }
 
@@ -57,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openEditor(Alarm a){
-        Intent editorIntent = new Intent(getApplicationContext(), alarm_editor.class);
+        Intent editorIntent = new Intent(getApplicationContext(), AlarmEditorActivity.class);
         editorIntent.putExtra(EXTRA_ALARM, a);
         startActivity(editorIntent);
     }

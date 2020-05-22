@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".alarm_editor"></activity>
+        <activity android:name=".AlarmEditorActivity"></activity>
         <activity android:name=".Alarm_triggered" />
         <activity android:name=".MainActivity">
             <intent-filter>

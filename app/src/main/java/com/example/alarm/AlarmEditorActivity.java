@@ -19,7 +19,7 @@ import android.widget.Toast;
 import java.text.DateFormat;
 import java.util.Calendar;
 
-public class alarm_editor extends AppCompatActivity {
+public class AlarmEditorActivity extends AppCompatActivity {
 
     Button saveButton;
     ImageView clearReminder;
@@ -60,14 +60,19 @@ public class alarm_editor extends AppCompatActivity {
     }
 
     public void SaveButtonPressed(View v) {
-        toast(getReminder());
-        finish();
-        /*if (alarm == null){
+        AlarmDao dao = AlarmDatabase.getInstance(this).alarmDao();
+        if (alarm == null){
             alarm = new Alarm(Alarm.ID_NOT_SET, getPickerTime(), getReminder(), true);
-            toast(alarm.toString());
+            int id = (int) dao.insertAlarm(alarm);
+            toast(alarm.toString() + id);
             //TODO add to db and
             finish();
         }
+        alarm.setText(getReminder());
+        alarm.setTime(getPickerTime());
+        dao.updateAlarm(alarm);
+        finish();
+        /*
         Intent intent = new Intent(this, AlarmReceiver.class);
         intent.putExtra("extra", true);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this,1,intent,0);

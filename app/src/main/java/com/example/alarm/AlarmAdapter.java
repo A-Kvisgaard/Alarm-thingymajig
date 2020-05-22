@@ -50,7 +50,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull AlarmAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final AlarmAdapter.ViewHolder holder, int position) {
         final Alarm alarm = lAlarms.get(position);
 
         TextView timeTV = holder.alarmTimeTextView;
@@ -63,7 +63,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
         Switch onSwitch = holder.onSwitch;
         onSwitch.setChecked(alarm.isOn());
-
         onSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -77,4 +76,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         return lAlarms.size();
     }
 
+    void updateData(List<Alarm> alarms){
+        this.lAlarms.clear();
+        this.lAlarms.addAll(alarms);
+        notifyDataSetChanged();
+    }
 }

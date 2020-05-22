@@ -21,4 +21,7 @@ public interface AlarmDao {
 
     @Delete
     void deleteAlarm(Alarm alarm);
+
+    @Query("DELETE FROM alarm")
+    void deleteAll();
 }
