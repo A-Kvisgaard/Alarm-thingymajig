@@ -1,10 +1,12 @@
 package com.example.alarm;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,18 +22,57 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_ALARM = "com.example.alarm.ALARM";
+    public static final String EXTRA_POSITION = "com.example.alarm.POSITION";
+    public static final String EXTRA_ACTION = "com.example.alarm.ACTION";
 
     Button buttonNewAlarm;
     RecyclerView rvAlarms;
     AlarmAdapter adapter;
 
     Context context;
+    DBTasks dbTasks;
     List<Alarm> alarms;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK){
+            if (data == null) return;
+
+            int pos = data.getIntExtra(EXTRA_POSITION, -1);
+            int action = data.getIntExtra(EXTRA_ACTION, 0);
+
+            switch (action){
+                case AlarmEditorActivity.ALARM_EDIDTED:
+                    if (pos == -1) return;
+                    Alarm a = (Alarm) data.getSerializableExtra(EXTRA_ALARM);
+                    Log.w("Precheck", "onActivityResult: " + (a != null) );
+                    if (a != null){
+                        Log.w("Update", "onActivityResult: " );
+                        adapter.updateAlarm(a, pos);
+                    }
+                    break;
+                case AlarmEditorActivity.ALARM_DELETED:
+                    if (pos == -1) return;
+                    adapter.removeAlarm(pos);
+                    break;
+                case AlarmEditorActivity.ALARM_ADDED:
+                    Alarm alarm = (Alarm) data.getSerializableExtra(EXTRA_ALARM);
+                    if (alarm != null){
+                        adapter.insertAlarm(alarm);
+                    }
+                    break;
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        context = this;
+        dbTasks = new DBTasks(context);
 
         rvAlarms = findViewById(R.id.AlarmRecyclerView);
         buttonNewAlarm = findViewById(R.id.buttonNewAlarm);
@@ -39,12 +80,11 @@ public class MainActivity extends AppCompatActivity {
         buttonNewAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openEditor(null);
+                openEditor(null, -1);
             }
         });
 
-        context = this;
-        adapter = new AlarmAdapter(new ArrayList<Alarm>());
+        adapter = new AlarmAdapter(new ArrayList<Alarm>(), dbTasks);
         rvAlarms.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
         rvAlarms.setAdapter(adapter);
         rvAlarms.setLayoutManager(new LinearLayoutManager(context));
@@ -55,15 +95,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void viewItemOnClick(View v){
         int pos = rvAlarms.getChildAdapterPosition(v);
-        Alarm clicked = alarms.get(pos);
+        Alarm clicked = adapter.getAlarm(pos);
         Toast.makeText(this, clicked.toString(), Toast.LENGTH_LONG).show();
-        openEditor(clicked);
+        openEditor(clicked, pos);
     }
 
-    private void openEditor(Alarm a){
+    private void openEditor(Alarm a, int pos){
         Intent editorIntent = new Intent(getApplicationContext(), AlarmEditorActivity.class);
         editorIntent.putExtra(EXTRA_ALARM, a);
-        startActivity(editorIntent);
+        editorIntent.putExtra(EXTRA_POSITION,pos);
+        startActivityForResult(editorIntent, 1);
+        //startActivity(editorIntent);
     }
 
 }

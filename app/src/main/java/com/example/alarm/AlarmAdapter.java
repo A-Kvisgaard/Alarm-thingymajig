@@ -11,6 +11,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -33,9 +34,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     }
 
     private List<Alarm> lAlarms;
+    private DBTasks dbTasks;
 
-    public AlarmAdapter(List<Alarm> alarms){
+    public AlarmAdapter(List<Alarm> alarms, DBTasks dbTasks){
         lAlarms = alarms;
+        this.dbTasks = dbTasks;
     }
 
     @NonNull
@@ -51,7 +54,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull final AlarmAdapter.ViewHolder holder, int position) {
-        final Alarm alarm = lAlarms.get(position);
+        Alarm alarm = lAlarms.get(position);
 
         TextView timeTV = holder.alarmTimeTextView;
         timeTV.setText(alarm.getTimeString());
@@ -66,7 +69,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         onSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                alarm.toggle();
+               lAlarms.get(holder.getAdapterPosition()).toggle(dbTasks);
             }
         });
     }
@@ -74,6 +77,29 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     @Override
     public int getItemCount() {
         return lAlarms.size();
+    }
+
+    public void alarmUpdated(int position){
+        notifyItemChanged(position);
+    }
+
+    public Alarm getAlarm(int position){
+        return lAlarms.get(position);
+    }
+    public void removeAlarm(int position){
+        this.lAlarms.remove(position);
+        notifyItemRemoved(position);
+        Log.d("Remove", "removeAlarm: "+position);
+    }
+
+    public void insertAlarm(Alarm a){
+        this.lAlarms.add(a);
+        Collections.sort(lAlarms);
+        notifyItemInserted(lAlarms.indexOf(a));
+    }
+    public void updateAlarm(Alarm a, int pos){
+        lAlarms.set(pos, a);
+        notifyItemChanged(pos);
     }
 
     void updateData(List<Alarm> alarms){

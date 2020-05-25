@@ -61,12 +61,20 @@ public class Alarm implements Comparable, Serializable {
         return DateFormat.getTimeInstance(DateFormat.SHORT).format(time);
     }
 
+    public String getText() {
+        return text;
+    }
+
     public void setText(String text) {
         this.text = text;
     }
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+    public void setId(int id ){
+        this.id = id;
     }
 
     public boolean today (){
@@ -82,26 +90,28 @@ public class Alarm implements Comparable, Serializable {
         return false;
     }
 
-    public void toggle(){
-        on = !on;
-        //dao.updateAlarm(this);
-        //TODO Cancel/start alarm
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public static ArrayList<Alarm> createAlarmList(int numAlarms){
-        ArrayList<Alarm> Alarms = new ArrayList<>();
-        long now = Calendar.getInstance().getTimeInMillis();
-
-        for (int i = 0; i <= numAlarms -1; i++){
-            long alarmTime = now + i *(60*60*1000);//Add an hour per alarm
-            Alarms.add(new Alarm(i, alarmTime,":::::LOREM IPSUM::::::::::LOREM IPSUM::::::::::LOREM IPSUM::::::::::LOREM IPSUM::::::::::LOREM IPSUM:::::", false));
+    public void toggle(DBTasks dbTasks){
+        if (isOn()){
+            cancel(dbTasks);
+        } else {
+            set(dbTasks);
         }
+    }
 
-        return Alarms;
+    public void set(DBTasks dbTasks){
+        if (on) return;
+        on = true;
+
+        dbTasks.update(this);
+        //TODO set new alarm
+    }
+
+    public void cancel(DBTasks dbTasks){
+        if (!on) return;
+        on = false;
+
+        dbTasks.update(this);
+        //TODO cancel Alarm
     }
 
     @NonNull

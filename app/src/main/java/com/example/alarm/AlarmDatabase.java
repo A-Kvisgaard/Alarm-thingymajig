@@ -18,7 +18,6 @@ public abstract class AlarmDatabase extends RoomDatabase {
             instance = Room.databaseBuilder(context.getApplicationContext(),
                     AlarmDatabase.class, "Alarm_database")
                     .fallbackToDestructiveMigration()
-                    .allowMainThreadQueries()
                     .build();
         }
         return instance;

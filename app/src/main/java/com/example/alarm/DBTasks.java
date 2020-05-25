@@ -58,7 +58,7 @@ public class DBTasks {
         }
         @Override
         protected Void doInBackground(Alarm... Alarms) {
-            alarmDao.insertAlarm(Alarms[0]);
+            Alarms[0].setId((int) alarmDao.insertAlarm(Alarms[0]));
             return null;
         }
     }

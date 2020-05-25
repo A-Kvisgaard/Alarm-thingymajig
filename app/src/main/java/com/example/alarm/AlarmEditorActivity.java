@@ -21,21 +21,31 @@ import java.util.Calendar;
 
 public class AlarmEditorActivity extends AppCompatActivity {
 
-    Button saveButton;
+    public static final int ALARM_EDIDTED = 111;
+    public static final int ALARM_DELETED = 112;
+    public static final int ALARM_ADDED = 113;
+
+    private int position;
+
+    Button saveButton, deleteButton;
     ImageView clearReminder;
     TimePicker picker;
     EditText reminderText;
     AlarmManager alarmManager;
     Alarm alarm;
+    DBTasks dbTasks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_editor);
 
+        dbTasks = new DBTasks(this);
+
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         saveButton = findViewById(R.id.saveButton);
+        deleteButton = findViewById(R.id.deleteButton);
         reminderText = findViewById(R.id.editTextReminder);
         reminderText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -49,37 +59,43 @@ public class AlarmEditorActivity extends AppCompatActivity {
         picker = findViewById(R.id.AlertTimePicker);
         picker.setIs24HourView(true);
 
+        position = getIntent().getIntExtra(MainActivity.EXTRA_POSITION, -1);
+
         alarm = (Alarm) getIntent().getSerializableExtra(MainActivity.EXTRA_ALARM);
 
         if (alarm != null){
             reminderText.setText(alarm.getText());
             picker.setHour(alarm.getHour());
             picker.setMinute(alarm.getMinute());
+            deleteButton.setVisibility(View.VISIBLE);
         }
 
     }
 
     public void SaveButtonPressed(View v) {
-        AlarmDao dao = AlarmDatabase.getInstance(this).alarmDao();
         if (alarm == null){
             alarm = new Alarm(Alarm.ID_NOT_SET, getPickerTime(), getReminder(), true);
-            int id = (int) dao.insertAlarm(alarm);
-            toast(alarm.toString() + id);
-            //TODO add to db and
-            finish();
+            toast(alarm.toString());
+            dbTasks.insert(alarm);
+            finish(ALARM_ADDED, alarm);
         }
         alarm.setText(getReminder());
         alarm.setTime(getPickerTime());
-        dao.updateAlarm(alarm);
-        finish();
+        dbTasks.update(alarm);
+        finish(ALARM_EDIDTED, alarm);
         /*
         Intent intent = new Intent(this, AlarmReceiver.class);
         intent.putExtra("extra", true);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this,1,intent,0);
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, getPickerTime(), pendingIntent);
         */
-
     }
+
+    public void deleteButtonPressed(View v){
+        dbTasks.delete(alarm);
+        finish(ALARM_DELETED, alarm);
+    }
+
     public void clearReminder(View v){
         reminderText.setText("");
     }
@@ -101,7 +117,17 @@ public class AlarmEditorActivity extends AppCompatActivity {
         toast(date);
         return calendar.getTimeInMillis();
     }
+
     private void toast(String message){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void finish(int action, Alarm alarm){
+        Intent intent = new Intent();
+        intent.putExtra(MainActivity.EXTRA_POSITION, position);
+        intent.putExtra(MainActivity.EXTRA_ACTION, action);
+        intent.putExtra(MainActivity.EXTRA_ALARM, alarm);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }
