@@ -3,7 +3,12 @@ package com.example.alarm;
 import android.app.DownloadManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,11 +29,56 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DataGatherer extends AppCompatActivity {
-
+    TextView textView;
+    RequestQueue queue;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private String lat = "55.5";
+    private String lon = "37.5";
+    String URL = "http://api.openweathermap.org/data/2.5/find?lat=" + lat + "&lon=" + lon + "&cnt=10";
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weather);
+        setContentView(R.layout.activity_main);
+
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        };
+        textView = findViewById(R.id.text);
+        queue = Volley.newRequestQueue(this);
+        StringRequest request = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                textView.setText(response.toString());
+                Toast.makeText(DataGatherer.this,response.toString(),Toast.LENGTH_LONG).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("error",error.toString());
+            }
+        });
+        queue.add(request);
     }
 
     public void APICall(View view/*double lat, double lon*/){
