@@ -1,52 +1,49 @@
 package com.example.alarm;
 
-import android.app.DownloadManager;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.Manifest;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.provider.Settings;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class DataGatherer extends AppCompatActivity {
+    //RequestQueue queue;
     TextView textView;
-    RequestQueue queue;
     private LocationManager locationManager;
     private LocationListener locationListener;
-    private String lat = "55.5";
+    private Button button;
+
+    /*private String lat = "55.5";
     private String lon = "37.5";
     String URL = "http://api.openweathermap.org/data/2.5/find?lat=" + lat + "&lon=" + lon + "&cnt=10";
+*/
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_weather);
+
+        button = findViewById(R.id.button);
+        textView = findViewById(R.id.textView);
+        //queue = Volley.newRequestQueue(this);
+
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-
+                textView.append("\n " + location.getLatitude() + " " + location.getLongitude());
             }
 
             @Override
@@ -61,27 +58,70 @@ public class DataGatherer extends AppCompatActivity {
 
             @Override
             public void onProviderDisabled(String s) {
-
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
             }
         };
-        textView = findViewById(R.id.text);
-        queue = Volley.newRequestQueue(this);
+
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET}, 10);
+        }else{
+
+            configureButton();
+        }
+        /*} else {
+            configureButton();
+        }*/
+/*
         StringRequest request = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 textView.setText(response.toString());
-                Toast.makeText(DataGatherer.this,response.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(DataGatherer.this, response.toString(), Toast.LENGTH_LONG).show();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("error",error.toString());
+                Log.d("error", error.toString());
             }
         });
-        queue.add(request);
+        queue.add(request);*/
     }
 
-    public void APICall(View view/*double lat, double lon*/){
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 10:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    configureButton();
+                return;
+        }
+    }
+
+    private void configureButton() {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("Hi");
+                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    Activity#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for Activity#requestPermissions for more details.
+                    return;
+                }
+                locationManager.requestLocationUpdates("gps", 10000, 0, locationListener);
+            }
+        });
+
+    }
+
+    /*public void APICall(View view, double lat, double lon){
         //JSONObject jobject = new JSONObject();
         //String APIKey = ""; //Ved ikke hvad APIKey skull være endnu. Har ikke læst nok op på det.
         //String url = "https://api.openweathermap.org/data/2.5/onecall?lat={" + lat + "}&lon={" + lon + "}&exclude={part}&appid={" + APIKey + "}";
@@ -107,5 +147,5 @@ public class DataGatherer extends AppCompatActivity {
 
 // Add the request to the RequestQueue.
         queue.add(stringRequest);
-    }
+    }*/
 }
