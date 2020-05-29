@@ -74,7 +74,7 @@ public class AlarmEditorActivity extends AppCompatActivity {
 
     public void SaveButtonPressed(View v) {
         if (alarm == null){
-            alarm = new Alarm(Alarm.ID_NOT_SET, getPickerTime(), getReminder(), true);
+            alarm = new Alarm(Alarm.ID_NOT_SET, getPickerTime(), getReminder(), false);
             toast(alarm.toString());
             dbTasks.insert(alarm);
             finish(ALARM_ADDED, alarm);
@@ -83,12 +83,6 @@ public class AlarmEditorActivity extends AppCompatActivity {
         alarm.setTime(getPickerTime());
         dbTasks.update(alarm);
         finish(ALARM_EDIDTED, alarm);
-        /*
-        Intent intent = new Intent(this, AlarmReceiver.class);
-        intent.putExtra("extra", true);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,1,intent,0);
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, getPickerTime(), pendingIntent);
-        */
     }
 
     public void deleteButtonPressed(View v){
@@ -113,8 +107,6 @@ public class AlarmEditorActivity extends AppCompatActivity {
         if (calendar.before(Calendar.getInstance())){
             calendar.add(Calendar.DATE, 1);
         }
-        String date = calendar.get(Calendar.MONTH) +"/" + calendar.get(Calendar.DATE) + " " + DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime());
-        toast(date);
         return calendar.getTimeInMillis();
     }
 

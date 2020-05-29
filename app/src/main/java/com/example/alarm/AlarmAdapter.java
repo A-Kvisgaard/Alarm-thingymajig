@@ -69,7 +69,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         onSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               lAlarms.get(holder.getAdapterPosition()).toggle(dbTasks);
+               lAlarms.get(holder.getAdapterPosition()).toggle(dbTasks, holder.onSwitch.getContext());
             }
         });
     }
@@ -79,13 +79,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         return lAlarms.size();
     }
 
-    public void alarmUpdated(int position){
-        notifyItemChanged(position);
-    }
-
     public Alarm getAlarm(int position){
         return lAlarms.get(position);
     }
+
     public void removeAlarm(int position){
         this.lAlarms.remove(position);
         notifyItemRemoved(position);
@@ -97,6 +94,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         Collections.sort(lAlarms);
         notifyItemInserted(lAlarms.indexOf(a));
     }
+
     public void updateAlarm(Alarm a, int pos){
         lAlarms.set(pos, a);
         notifyItemChanged(pos);

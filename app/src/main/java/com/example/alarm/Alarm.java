@@ -1,9 +1,17 @@
 package com.example.alarm;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
@@ -12,6 +20,7 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class Alarm implements Comparable, Serializable {
+
     @Ignore
     public static final int ID_NOT_SET = 0;//primary key treated as not set when 0
 
@@ -90,34 +99,59 @@ public class Alarm implements Comparable, Serializable {
         return false;
     }
 
-    public void toggle(DBTasks dbTasks){
+    public void toggle(DBTasks dbTasks, Context context){
         if (isOn()){
-            cancel(dbTasks);
+            cancel(dbTasks, context);
         } else {
-            set(dbTasks);
+            set(dbTasks, context);
         }
     }
 
-    public void set(DBTasks dbTasks){
-        if (on) return;
+    public void set(DBTasks dbTasks, Context context){
         on = true;
 
+        if (time < System.currentTimeMillis()){
+            Calendar newTime = Calendar.getInstance();
+            newTime.set(hour, getHour());
+            newTime.set(min, getMinute());
+            if (newTime.before(Calendar.getInstance())){
+                newTime.add(Calendar.DATE, 1);
+            }
+            setTime(newTime.getTimeInMillis());
+        }
+
         dbTasks.update(this);
-        //TODO set new alarm
+
+        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        //Had to put alarm in bundle for it not to null in the receiver
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(MainActivity.EXTRA_ALARM, this);
+        intent.putExtra("bundle", bundle);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, getTime(), pendingIntent);
+
     }
 
-    public void cancel(DBTasks dbTasks){
-        if (!on) return;
+    public void cancel(DBTasks dbTasks, Context context){
         on = false;
 
         dbTasks.update(this);
-        //TODO cancel Alarm
+
+        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.putExtra(MainActivity.EXTRA_ALARM, this);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, this.id, intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        manager.cancel(pendingIntent);
     }
 
     @NonNull
     @Override
     public String toString() {
-        return getId()+ " | " + getTimeString()+ " | " + isOn();
+        return new SimpleDateFormat("dd-M hh:mm").format(new Date(getTime()));
     }
 
     @Override
@@ -125,4 +159,5 @@ public class Alarm implements Comparable, Serializable {
         Alarm other_alarm = (Alarm) o;
         return this.getTimeString().compareTo(other_alarm.getTimeString());
     }
+
 }

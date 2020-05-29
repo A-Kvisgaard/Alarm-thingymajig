@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
     Context context;
     DBTasks dbTasks;
-    List<Alarm> alarms;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -41,26 +40,30 @@ public class MainActivity extends AppCompatActivity {
 
             int pos = data.getIntExtra(EXTRA_POSITION, -1);
             int action = data.getIntExtra(EXTRA_ACTION, 0);
+            Alarm alarm = (Alarm) data.getSerializableExtra(EXTRA_ALARM);
+
+            if (alarm == null) return;
 
             switch (action){
                 case AlarmEditorActivity.ALARM_EDIDTED:
                     if (pos == -1) return;
-                    Alarm a = (Alarm) data.getSerializableExtra(EXTRA_ALARM);
-                    Log.w("Precheck", "onActivityResult: " + (a != null) );
-                    if (a != null){
-                        Log.w("Update", "onActivityResult: " );
-                        adapter.updateAlarm(a, pos);
+                    if (alarm.isOn()){
+                        //Update PendingIntent
+                        alarm.cancel(dbTasks, context);
+                        alarm.set(dbTasks, context);
                     }
+                    adapter.updateAlarm(alarm, pos);
                     break;
                 case AlarmEditorActivity.ALARM_DELETED:
                     if (pos == -1) return;
+                    if (alarm.isOn()){
+                        alarm.cancel(dbTasks, context);
+                    }
                     adapter.removeAlarm(pos);
                     break;
                 case AlarmEditorActivity.ALARM_ADDED:
-                    Alarm alarm = (Alarm) data.getSerializableExtra(EXTRA_ALARM);
-                    if (alarm != null){
-                        adapter.insertAlarm(alarm);
-                    }
+                    adapter.insertAlarm(alarm);
+                    alarm.set(dbTasks, context);
                     break;
             }
         }
@@ -103,9 +106,7 @@ public class MainActivity extends AppCompatActivity {
     private void openEditor(Alarm a, int pos){
         Intent editorIntent = new Intent(getApplicationContext(), AlarmEditorActivity.class);
         editorIntent.putExtra(EXTRA_ALARM, a);
-        editorIntent.putExtra(EXTRA_POSITION,pos);
+        editorIntent.putExtra(EXTRA_POSITION, pos);
         startActivityForResult(editorIntent, 1);
-        //startActivity(editorIntent);
     }
-
 }
