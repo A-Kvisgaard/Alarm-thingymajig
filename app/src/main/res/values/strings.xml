@@ -2,5 +2,11 @@
     <string name="app_name">Alarm</string>
     <string name="weather_weather">The Weather Outside</string>
     <string name="weather_temperature">The Temperature</string>
-    <string name="coordinate_view">Coordinates:</string>
+    <string name="buttom_new_alarm">New Alarm</string>
+    <string name="button_save_alarm">Save Alarm</string>
+    <string name="button_delete_alarm">Delete Alarm</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="reminder">Reminder</string>
+    <string name="dismiss">Dismiss</string>
 </resources>
