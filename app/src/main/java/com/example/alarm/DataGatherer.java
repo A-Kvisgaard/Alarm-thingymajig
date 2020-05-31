@@ -114,10 +114,10 @@ public class DataGatherer extends AppCompatActivity {
 
     public void APICall(double lat, double lon) {
         String strlat = Double.toString(lat);
-        strlat = strlat.substring(0, 10);
+        strlat = strlat.substring(0, 8);
         String strlon = Double.toString(lon);
-        strlon = strlon.substring(0, 10);
-        String APIKey = "f6c3a3f6cdb9fe5301ecd683e89bad1d";
+        strlon = strlon.substring(0, 8);
+        String APIKey = "f6c3a3f6cdb9fe5301ecd683e89bad1d"; //Personalized APIKey needed to get Data.
         String url = "https://api.openweathermap.org/data/2.5/weather?lat=" + strlat + "&lon=" + strlon + "&appid=" + APIKey;
         final String[] imageId = {null};
 
@@ -137,7 +137,7 @@ public class DataGatherer extends AppCompatActivity {
 
                             textView.setText("\nThe weather is currently:\n" + main + " (" + description + ")\n");
 
-                            String url2 = "https://openweathermap.org/img/wn/" + imageId[0] + "@2x.png";
+                            String url2 = "https://openweathermap.org/img/wn/" + imageId[0] + "@4x.png";
 
                             Picasso.get().load(url2).into(imageView);
 
