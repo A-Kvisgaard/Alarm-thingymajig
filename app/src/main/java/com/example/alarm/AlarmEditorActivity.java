@@ -1,23 +1,18 @@
 
 package com.example.alarm;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
-import java.text.DateFormat;
 import java.util.Calendar;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class AlarmEditorActivity extends AppCompatActivity {
 
