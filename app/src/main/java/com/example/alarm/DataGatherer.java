@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -22,8 +23,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +38,7 @@ public class DataGatherer extends AppCompatActivity {
     private LocationManager locationManager;
     private LocationListener locationListener;
     private Button button;
+    private ImageView imageView;
 
 
     private double lat;
@@ -50,6 +52,7 @@ public class DataGatherer extends AppCompatActivity {
 
         button = findViewById(R.id.button);
         textView = findViewById(R.id.textView);
+        imageView = findViewById(R.id.imageView);
         //queue = Volley.newRequestQueue(this);
 
 
@@ -57,7 +60,7 @@ public class DataGatherer extends AppCompatActivity {
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET}, 10);
-        }else{
+        } else {
             configureButton(); //Currently works off the button.
         }
 
@@ -95,7 +98,7 @@ public class DataGatherer extends AppCompatActivity {
         switch (requestCode) {
             case 10:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                return;
+                    return;
         }
     }
 
@@ -103,22 +106,24 @@ public class DataGatherer extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) { //If we want something other than a button, this is where we change it
-                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    return; //Returns if any of them do not have Permission Granted
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return; //Returns if any of them do not have Permission Granted
+                    }
                 }
                 locationManager.requestLocationUpdates("gps", 10000, 0, locationListener);
             }
         });
     }
 
-    public void APICall(double lat, double lon){
+    public void APICall(double lat, double lon) {
         String strlat = Double.toString(lat);
-        strlat = strlat.substring(0,10);
+        strlat = strlat.substring(0, 10);
         String strlon = Double.toString(lon);
-        strlon = strlon.substring(0,10);
+        strlon = strlon.substring(0, 10);
         String APIKey = "f6c3a3f6cdb9fe5301ecd683e89bad1d";
         String url = "https://api.openweathermap.org/data/2.5/weather?lat=" + strlat + "&lon=" + strlon + "&appid=" + APIKey;
-
+        final String[] imageId = {null};
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -129,14 +134,17 @@ public class DataGatherer extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         try {
                             JSONArray jsonArray = response.getJSONArray("weather");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject weather = jsonArray.getJSONObject(i);
-                                int id = weather.getInt("id");
-                                String main = weather.getString("main");
-                                String description = weather.getString("description");
+                            JSONObject weather = jsonArray.getJSONObject(0);
+                            String main = weather.getString("main");
+                            String description = weather.getString("description");
+                            imageId[0] = weather.getString("icon");
 
-                                textView.setText("\nThe weather is currently:\n" + main + " (" + description + ")\n");
-                            }
+                            textView.setText("\nThe weather is currently:\n" + main + " (" + description + ")\n");
+
+                            String url2 = "https://openweathermap.org/img/wn/" + imageId[0] + "@2x.png";
+
+                            Picasso.get().load(url2).into(imageView);
+
                             JSONObject jsonObject2 = response.getJSONObject("main");
                             double temp = jsonObject2.getDouble("temp");
                             double celsius = temp - 272.15;
@@ -152,7 +160,7 @@ public class DataGatherer extends AppCompatActivity {
                             nf2.setMaximumFractionDigits(2);
                             String speed2 = nf2.format(speed);
 
-                            textView.append("\n The current wind speed is:\n" + speed2 + " M/s\n");
+                            textView.append("\n Expect Wind Speeds of:\n" + speed2 + " M/s\n");
 
 
                         } catch (JSONException e) {
@@ -167,8 +175,29 @@ public class DataGatherer extends AppCompatActivity {
         });
 
 
+
+        /*JsonObjectRequest request2 = new JsonObjectRequest(Request.Method.GET, url2, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject jsonObject2 = response.getJSONObject("main");
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });*/
+
 // Add the request to the RequestQueue.
         queue.add(request);
 
     }
+
+
 }
