@@ -95,7 +95,6 @@ public class DataGatherer extends AppCompatActivity {
         switch (requestCode) {
             case 10:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    //configureButton();
                 return;
         }
     }
@@ -103,7 +102,7 @@ public class DataGatherer extends AppCompatActivity {
     private void configureButton() {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view) { //If we want something other than a button, this is where we change it
                 if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return; //Returns if any of them do not have Permission Granted
                 }
