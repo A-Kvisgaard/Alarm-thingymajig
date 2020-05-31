@@ -114,8 +114,7 @@ public class AlarmTriggeredActivity extends AppCompatActivity {
             requestPermissions(new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET}, 10);
         } else {
-            steve();
-            //configureButton(); //Currently works off the button.
+            locationUpdates();
         }
 
     }
@@ -129,7 +128,7 @@ public class AlarmTriggeredActivity extends AppCompatActivity {
         }
     }
 
-    private void steve() {
+    private void locationUpdates() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return; //Returns if any of them do not have Permission Granted
@@ -137,20 +136,6 @@ public class AlarmTriggeredActivity extends AppCompatActivity {
         }
         locationManager.requestLocationUpdates("gps", 10000, 0, locationListener);
     }
-
-    /*private void configureButton() {
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) { //If we want something other than a button, this is where we change it
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        return; //Returns if any of them do not have Permission Granted
-                    }
-                }
-                locationManager.requestLocationUpdates("gps", 10000, 0, locationListener);
-            }
-        });
-    }*/
 
     public void APICall(double lat, double lon) {
         String strlat = Double.toString(lat);
@@ -178,7 +163,6 @@ public class AlarmTriggeredActivity extends AppCompatActivity {
                             textView.setText("\nThe weather is currently:\n" + main + " (" + description + ")\n");
 
                             String url2 = "https://openweathermap.org/img/wn/" + imageId[0] + "@4x.png";
-
                             Picasso.get().load(url2).into(imageView);
 
                             JSONObject jsonObject2 = response.getJSONObject("main");
@@ -198,7 +182,6 @@ public class AlarmTriggeredActivity extends AppCompatActivity {
 
                             textView.append("\n Expect Wind Speeds of:\n" + speed2 + " M/s\n");
 
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -210,11 +193,7 @@ public class AlarmTriggeredActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-
-// Add the request to the RequestQueue.
+        // Add the request to the RequestQueue.
         queue.add(request);
 
     }
