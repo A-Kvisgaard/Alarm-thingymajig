@@ -33,7 +33,6 @@ import org.json.JSONObject;
 import java.text.NumberFormat;
 
 public class DataGatherer extends AppCompatActivity {
-    private RequestQueue queue;
     private TextView textView;
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -53,10 +52,8 @@ public class DataGatherer extends AppCompatActivity {
         button = findViewById(R.id.button);
         textView = findViewById(R.id.textView);
         imageView = findViewById(R.id.imageView);
-        //queue = Volley.newRequestQueue(this);
 
 
-        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET}, 10);
@@ -68,7 +65,6 @@ public class DataGatherer extends AppCompatActivity {
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                String currentCoordinates = location.getLatitude() + " " + location.getLongitude();
                 lat = location.getLatitude();
                 lon = location.getLongitude();
                 APICall(lat, lon);
@@ -176,23 +172,7 @@ public class DataGatherer extends AppCompatActivity {
 
 
 
-        /*JsonObjectRequest request2 = new JsonObjectRequest(Request.Method.GET, url2, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONObject jsonObject2 = response.getJSONObject("main");
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        });*/
 
 // Add the request to the RequestQueue.
         queue.add(request);
