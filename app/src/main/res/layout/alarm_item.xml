@@ -3,38 +3,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="80dp"
+    android:background="#3366aa"
+    android:onClick="viewItemOnClick"
     android:paddingTop="5dp"
-    android:paddingBottom="5dp"
-    android:onClick="viewItemOnClick">
+    android:paddingBottom="5dp">
+
     <LinearLayout
-        android:layout_weight="1"
-        android:orientation="vertical"
         android:layout_width="0dp"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/textViewAlarmTime"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="40px"
+            android:textColor="#ffffff"
             android:paddingTop="4dp"
-            android:textSize="25sp"
-            android:layout_height="wrap_content"/>
+            android:textSize="25sp" />
+
         <TextView
-            android:paddingTop="5dp"
             android:id="@+id/textViewAlarmInfo"
             android:layout_width="wrap_content"
-            android:textSize="12sp"
-            android:paddingBottom="4dp"
             android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:paddingLeft="40px"
             android:ellipsize="end"
-            android:maxLines="1"/>
+            android:maxLines="1"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:textSize="12sp" />
     </LinearLayout>
 
     <Switch
         android:id="@+id/switchAlarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="28dp"
-        android:paddingBottom="16dp"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp" />
+        android:paddingTop="28dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp" />
 
 </LinearLayout>
