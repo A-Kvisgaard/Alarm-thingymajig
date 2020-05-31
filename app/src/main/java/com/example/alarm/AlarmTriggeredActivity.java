@@ -203,14 +203,13 @@ public class AlarmTriggeredActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         vibrator.cancel();
-        mp.stop();
+        if (mp.isPlaying()){ mp.stop();}
         mp.release();
     }
 
     public void dismissAlarm(View v){
         vibrator.cancel();
-        mp.stop();
-        mp.release();
+        if (mp.isPlaying()){ mp.stop();}
         finishAffinity();
     }
 }
