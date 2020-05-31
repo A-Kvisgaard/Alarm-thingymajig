@@ -75,7 +75,6 @@ public class AlarmEditorActivity extends AppCompatActivity {
     public void SaveButtonPressed(View v) {
         if (alarm == null){
             alarm = new Alarm(Alarm.ID_NOT_SET, getPickerTime(), getReminder(), false);
-            toast(alarm.toString());
             dbTasks.insert(alarm);
             finish(ALARM_ADDED, alarm);
         }
@@ -108,10 +107,6 @@ public class AlarmEditorActivity extends AppCompatActivity {
             calendar.add(Calendar.DATE, 1);
         }
         return calendar.getTimeInMillis();
-    }
-
-    private void toast(String message){
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     private void finish(int action, Alarm alarm){

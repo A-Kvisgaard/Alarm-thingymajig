@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -69,7 +70,13 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         onSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               lAlarms.get(holder.getAdapterPosition()).toggle(dbTasks, holder.onSwitch.getContext());
+                Context context = holder.onSwitch.getContext();
+                Alarm clicked = lAlarms.get(holder.getAdapterPosition());
+                clicked.toggle(dbTasks, context);
+                if (clicked.isOn()){
+                    Toast.makeText(context, clicked.timeTill(), Toast.LENGTH_LONG).show();
+                }
+
             }
         });
     }
