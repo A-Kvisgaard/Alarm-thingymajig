@@ -9,27 +9,29 @@
 
         <Button
             android:id="@+id/button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.181" />
 
         <TextView
             android:id="@+id/textView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/button"
             android:layout_centerHorizontal="true"
             android:background="#010014"
             android:gravity="center"
-            android:text="Coordinates: "
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#ffffff"></TextView>
+            android:textColor="#ffffff"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button"></TextView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

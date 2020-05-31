@@ -17,17 +17,31 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.NumberFormat;
+
 public class DataGatherer extends AppCompatActivity {
-    //RequestQueue queue;
-    TextView textView;
+    private RequestQueue queue;
+    private TextView textView;
     private LocationManager locationManager;
     private LocationListener locationListener;
     private Button button;
 
-    /*private String lat = "55.5";
-    private String lon = "37.5";
-    String URL = "http://api.openweathermap.org/data/2.5/find?lat=" + lat + "&lon=" + lon + "&cnt=10";
-*/
+
+    private double lat;
+    private double lon;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +53,22 @@ public class DataGatherer extends AppCompatActivity {
         //queue = Volley.newRequestQueue(this);
 
 
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET}, 10);
+        }else{
+            configureButton(); //Currently works off the button.
+        }
+
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                textView.append("\n " + location.getLatitude() + " " + location.getLongitude());
+                String currentCoordinates = location.getLatitude() + " " + location.getLongitude();
+                lat = location.getLatitude();
+                lon = location.getLongitude();
+                APICall(lat, lon);
             }
 
             @Override
@@ -63,31 +88,6 @@ public class DataGatherer extends AppCompatActivity {
             }
         };
 
-        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{
-                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET}, 10);
-        }else{
-
-            configureButton();
-        }
-        /*} else {
-            configureButton();
-        }*/
-/*
-        StringRequest request = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                textView.setText(response.toString());
-                Toast.makeText(DataGatherer.this, response.toString(), Toast.LENGTH_LONG).show();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("error", error.toString());
-            }
-        });
-        queue.add(request);*/
     }
 
     @Override
@@ -95,7 +95,7 @@ public class DataGatherer extends AppCompatActivity {
         switch (requestCode) {
             case 10:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    configureButton();
+                    //configureButton();
                 return;
         }
     }
@@ -104,48 +104,72 @@ public class DataGatherer extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("Hi");
                 if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    Activity#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for Activity#requestPermissions for more details.
-                    return;
+                    return; //Returns if any of them do not have Permission Granted
                 }
                 locationManager.requestLocationUpdates("gps", 10000, 0, locationListener);
             }
         });
-
     }
 
-    /*public void APICall(View view, double lat, double lon){
-        //JSONObject jobject = new JSONObject();
-        //String APIKey = ""; //Ved ikke hvad APIKey skull være endnu. Har ikke læst nok op på det.
-        //String url = "https://api.openweathermap.org/data/2.5/onecall?lat={" + lat + "}&lon={" + lon + "}&exclude={part}&appid={" + APIKey + "}";
-        final TextView textView = findViewById(R.id.textView3);
-        textView.setText("Pasta");
-        String url = "https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=439d4b804bc8187953eb36d2a8c26a02";
+    public void APICall(double lat, double lon){
+        String strlat = Double.toString(lat);
+        strlat = strlat.substring(0,10);
+        String strlon = Double.toString(lon);
+        strlon = strlon.substring(0,10);
+        String APIKey = "f6c3a3f6cdb9fe5301ecd683e89bad1d";
+        String url = "https://api.openweathermap.org/data/2.5/weather?lat=" + strlat + "&lon=" + strlon + "&appid=" + APIKey;
+
+
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
         // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        textView.setText("Response is: "+ response.substring(0,500));
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray jsonArray = response.getJSONArray("weather");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject weather = jsonArray.getJSONObject(i);
+                                int id = weather.getInt("id");
+                                String main = weather.getString("main");
+                                String description = weather.getString("description");
+
+                                textView.setText("\nThe weather is currently:\n" + main + " (" + description + ")\n");
+                            }
+                            JSONObject jsonObject2 = response.getJSONObject("main");
+                            double temp = jsonObject2.getDouble("temp");
+                            double celsius = temp - 272.15;
+                            NumberFormat nf1 = NumberFormat.getNumberInstance();
+                            nf1.setMaximumFractionDigits(1);
+                            String degree = nf1.format(celsius);
+
+                            textView.append("\n The current temperature is:\n" + degree + " Degrees Celsius\n");
+
+                            JSONObject jsonObject3 = response.getJSONObject("wind");
+                            double speed = jsonObject3.getDouble("speed");
+                            NumberFormat nf2 = NumberFormat.getNumberInstance();
+                            nf2.setMaximumFractionDigits(2);
+                            String speed2 = nf2.format(speed);
+
+                            textView.append("\n The current wind speed is:\n" + speed2 + " M/s\n");
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                textView.setText("That didn't work!");
             }
         });
 
+
 // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-    }*/
+        queue.add(request);
+
+    }
 }
