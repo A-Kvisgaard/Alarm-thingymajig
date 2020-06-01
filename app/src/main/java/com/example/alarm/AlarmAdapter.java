@@ -71,7 +71,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                 Alarm clicked = lAlarms.get(holder.getAdapterPosition());
                 clicked.toggle(dbTasks, context);
                 if (clicked.isOn()){
-                    Toast.makeText(context, clicked.timeTill(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, clicked.timeTill(), Toast.LENGTH_SHORT).show();
                 }
             }
         });

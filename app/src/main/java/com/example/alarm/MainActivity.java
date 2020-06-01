@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 case AlarmEditorActivity.ALARM_ADDED:
                     adapter.insertAlarm(alarm);
                     alarm.set(dbTasks, context);
+                    Toast.makeText(context, alarm.timeTill(), Toast.LENGTH_SHORT).show();
                     break;
             }
         }
