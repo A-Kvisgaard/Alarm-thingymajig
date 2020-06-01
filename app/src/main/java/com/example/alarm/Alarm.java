@@ -41,6 +41,7 @@ public class Alarm implements Comparable, Serializable {
         this.text = text;
         this.on = on;
     }
+
     public int getHour(){
         Calendar alarmTime = Calendar.getInstance();
         alarmTime.setTimeInMillis(time);
@@ -65,6 +66,7 @@ public class Alarm implements Comparable, Serializable {
     public long getTime() {
         return time;
     }
+
     public String getTimeString() {
         return DateFormat.getTimeInstance(DateFormat.SHORT).format(time);
     }

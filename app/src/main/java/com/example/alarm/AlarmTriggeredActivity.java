@@ -37,15 +37,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class AlarmTriggeredActivity extends AppCompatActivity {
 
-    TextView textTV, dateTV;
+    TextView textTV, dateTV, weatherTV;
+    ImageView weatherImage;
     Vibrator vibrator;
     MediaPlayer mp;
 
-    private TextView textView;
     private LocationManager locationManager;
     private LocationListener locationListener;
-    //private Button button;
-    private ImageView imageView;
 
     private double lat;
     private double lon;
@@ -75,12 +73,8 @@ public class AlarmTriggeredActivity extends AppCompatActivity {
         mp.setLooping(true);
         mp.start();
 
-        //button = findViewById(R.id.button);
-        textView = findViewById(R.id.weatherInformationTextView);
-        imageView = findViewById(R.id.weatherImageView);
-
-
-
+        weatherTV = findViewById(R.id.weatherInformationTextView);
+        weatherImage = findViewById(R.id.weatherImageView);
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
@@ -157,10 +151,10 @@ public class AlarmTriggeredActivity extends AppCompatActivity {
                             String description = weather.getString("description");
                             imageId[0] = weather.getString("icon");
 
-                            textView.setText("\nThe weather is currently:\n" + main + " (" + description + ")\n");
+                            weatherTV.setText("\nThe weather is currently:\n" + main + " (" + description + ")\n");
 
                             String url2 = "https://openweathermap.org/img/wn/" + imageId[0] + "@4x.png";
-                            Picasso.get().load(url2).into(imageView);
+                            Picasso.get().load(url2).into(weatherImage);
 
                             JSONObject jsonObject2 = response.getJSONObject("main");
                             double temp = jsonObject2.getDouble("temp");
@@ -169,7 +163,7 @@ public class AlarmTriggeredActivity extends AppCompatActivity {
                             nf1.setMaximumFractionDigits(1);
                             String degree = nf1.format(celsius);
 
-                            textView.append("\n The current temperature is:\n" + degree + " Degrees Celsius\n");
+                            weatherTV.append("\n The current temperature is:\n" + degree + " Degrees Celsius\n");
 
                             JSONObject jsonObject3 = response.getJSONObject("wind");
                             double speed = jsonObject3.getDouble("speed");
@@ -177,7 +171,7 @@ public class AlarmTriggeredActivity extends AppCompatActivity {
                             nf2.setMaximumFractionDigits(2);
                             String speed2 = nf2.format(speed);
 
-                            textView.append("\n Expect Wind Speeds of:\n" + speed2 + " M/s\n");
+                            weatherTV.append("\n Expect Wind Speeds of:\n" + speed2 + " M/s\n");
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -189,12 +183,9 @@ public class AlarmTriggeredActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
             }
         });
-
         // Add the request to the RequestQueue.
         queue.add(request);
-
     }
-
 
     @Override
     protected void onDestroy() {

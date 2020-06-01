@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -41,10 +40,9 @@ public class MainActivity extends AppCompatActivity {
             if (alarm == null) return;
 
             switch (action){
-                case AlarmEditorActivity.ALARM_EDIDTED:
+                case AlarmEditorActivity.ALARM_EDITED:
                     if (pos == -1) return;
                     if (alarm.isOn()){
-                        //Update PendingIntent
                         alarm.cancel(dbTasks, context);
                         alarm.set(dbTasks, context);
                     }
@@ -95,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
     public void viewItemOnClick(View v){
         int pos = rvAlarms.getChildAdapterPosition(v);
         Alarm clicked = adapter.getAlarm(pos);
-        Toast.makeText(this, clicked.toString(), Toast.LENGTH_LONG).show();
         openEditor(clicked, pos);
     }
 

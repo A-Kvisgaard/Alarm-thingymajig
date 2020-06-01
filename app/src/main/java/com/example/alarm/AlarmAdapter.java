@@ -1,6 +1,5 @@
 package com.example.alarm;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,7 +50,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         return new ViewHolder(alarmView);
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull final AlarmAdapter.ViewHolder holder, int position) {
         Alarm alarm = lAlarms.get(position);
@@ -75,7 +73,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                 if (clicked.isOn()){
                     Toast.makeText(context, clicked.timeTill(), Toast.LENGTH_LONG).show();
                 }
-
             }
         });
     }

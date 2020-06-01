@@ -1,4 +1,3 @@
-
 package com.example.alarm;
 
 import android.app.AlarmManager;
@@ -7,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
@@ -16,14 +14,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class AlarmEditorActivity extends AppCompatActivity {
 
-    public static final int ALARM_EDIDTED = 111;
+    public static final int ALARM_EDITED = 111;
     public static final int ALARM_DELETED = 112;
     public static final int ALARM_ADDED = 113;
 
     private int position;
 
     Button saveButton, deleteButton;
-    ImageView clearReminder;
     TimePicker picker;
     EditText reminderText;
     AlarmManager alarmManager;
@@ -64,7 +61,6 @@ public class AlarmEditorActivity extends AppCompatActivity {
             picker.setMinute(alarm.getMinute());
             deleteButton.setVisibility(View.VISIBLE);
         }
-
     }
 
     public void SaveButtonPressed(View v) {
@@ -76,7 +72,7 @@ public class AlarmEditorActivity extends AppCompatActivity {
         alarm.setText(getReminder());
         alarm.setTime(getPickerTime());
         dbTasks.update(alarm);
-        finish(ALARM_EDIDTED, alarm);
+        finish(ALARM_EDITED, alarm);
     }
 
     public void deleteButtonPressed(View v){
@@ -101,6 +97,7 @@ public class AlarmEditorActivity extends AppCompatActivity {
         if (calendar.before(Calendar.getInstance())){
             calendar.add(Calendar.DATE, 1);
         }
+
         return calendar.getTimeInMillis();
     }
 
