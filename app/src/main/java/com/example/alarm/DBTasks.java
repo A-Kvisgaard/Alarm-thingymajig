@@ -2,12 +2,12 @@ package com.example.alarm;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.util.Collections;
 import java.util.List;
 
 public class DBTasks {
+
     private AlarmDao alarmDao;
 
     public DBTasks(Context context) {
@@ -18,12 +18,15 @@ public class DBTasks {
     public void getAll(AlarmAdapter adapter){
         new GetAllAlarms(alarmDao, adapter).execute();
     }
+
     public void insert(Alarm a) {
         new InsertAlarmAsyncTask(alarmDao).execute(a);
     }
+
     public void update(Alarm a) {
         new UpdateAlarmAsyncTask(alarmDao).execute(a);
     }
+
     public void delete(Alarm a) {
         new DeleteAlarmAsyncTask(alarmDao).execute(a);
     }
@@ -62,6 +65,7 @@ public class DBTasks {
             return null;
         }
     }
+
     private static class UpdateAlarmAsyncTask extends AsyncTask<Alarm, Void, Void> {
         private AlarmDao alarmDao;
         private UpdateAlarmAsyncTask(AlarmDao alarmDao) {
@@ -73,6 +77,7 @@ public class DBTasks {
             return null;
         }
     }
+
     private static class DeleteAlarmAsyncTask extends AsyncTask<Alarm, Void, Void> {
         private AlarmDao alarmDao;
         private DeleteAlarmAsyncTask(AlarmDao alarmDao) {

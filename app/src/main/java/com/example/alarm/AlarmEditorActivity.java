@@ -1,34 +1,26 @@
-
 package com.example.alarm;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
-import java.text.DateFormat;
 import java.util.Calendar;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class AlarmEditorActivity extends AppCompatActivity {
 
-    public static final int ALARM_EDIDTED = 111;
+    public static final int ALARM_EDITED = 111;
     public static final int ALARM_DELETED = 112;
     public static final int ALARM_ADDED = 113;
 
     private int position;
 
     Button saveButton, deleteButton;
-    ImageView clearReminder;
     TimePicker picker;
     EditText reminderText;
     AlarmManager alarmManager;
@@ -69,20 +61,18 @@ public class AlarmEditorActivity extends AppCompatActivity {
             picker.setMinute(alarm.getMinute());
             deleteButton.setVisibility(View.VISIBLE);
         }
-
     }
 
     public void SaveButtonPressed(View v) {
         if (alarm == null){
             alarm = new Alarm(Alarm.ID_NOT_SET, getPickerTime(), getReminder(), false);
-            toast(alarm.toString());
             dbTasks.insert(alarm);
             finish(ALARM_ADDED, alarm);
         }
         alarm.setText(getReminder());
         alarm.setTime(getPickerTime());
         dbTasks.update(alarm);
-        finish(ALARM_EDIDTED, alarm);
+        finish(ALARM_EDITED, alarm);
     }
 
     public void deleteButtonPressed(View v){
@@ -107,11 +97,8 @@ public class AlarmEditorActivity extends AppCompatActivity {
         if (calendar.before(Calendar.getInstance())){
             calendar.add(Calendar.DATE, 1);
         }
-        return calendar.getTimeInMillis();
-    }
 
-    private void toast(String message){
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        return calendar.getTimeInMillis();
     }
 
     private void finish(int action, Alarm alarm){

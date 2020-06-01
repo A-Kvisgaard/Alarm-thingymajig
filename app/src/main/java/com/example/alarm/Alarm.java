@@ -9,7 +9,6 @@ import android.os.Bundle;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -42,6 +41,7 @@ public class Alarm implements Comparable, Serializable {
         this.text = text;
         this.on = on;
     }
+
     public int getHour(){
         Calendar alarmTime = Calendar.getInstance();
         alarmTime.setTimeInMillis(time);
@@ -66,6 +66,7 @@ public class Alarm implements Comparable, Serializable {
     public long getTime() {
         return time;
     }
+
     public String getTimeString() {
         return DateFormat.getTimeInstance(DateFormat.SHORT).format(time);
     }
@@ -148,6 +149,26 @@ public class Alarm implements Comparable, Serializable {
         manager.cancel(pendingIntent);
     }
 
+    public String timeTill(){
+        String time = "";
+        long till = this.getTime() - System.currentTimeMillis();
+        int days   = (int) (till / (1000*60*60*24));
+        int hours   = (int) ((till - days*1000*60*60*24) / (1000*60*60));
+        int minutes = (int) ((till - days*1000*60*60*24 - hours * 1000*60*60) / (1000*60));
+
+        if (days > 0){
+            time = String.format("%d days, %d hours and %d minutes",days,hours,minutes);
+        } else if (hours > 0){
+            time = String.format("%02d hours and %02d minutes",hours,minutes);
+        } else if (minutes > 0){
+            time = String.format("%02d minutes",minutes);
+        } else {
+            time = "less then a minute";
+        }
+
+        return "Alarm rings in " + time;
+    }
+
     @NonNull
     @Override
     public String toString() {
@@ -157,7 +178,11 @@ public class Alarm implements Comparable, Serializable {
     @Override
     public int compareTo(Object o) {
         Alarm other_alarm = (Alarm) o;
-        return this.getTimeString().compareTo(other_alarm.getTimeString());
+        int compare = Integer.compare(this.getHour(), other_alarm.getHour());
+        if (compare == 0){
+            return Integer.compare(this.getMinute(), this.getMinute());
+        }
+        return compare;
     }
 
 }
