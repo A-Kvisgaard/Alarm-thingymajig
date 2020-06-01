@@ -158,8 +158,12 @@ public class Alarm implements Comparable, Serializable {
 
         if (days > 0){
             time = String.format("%d days, %d hours and %d minutes",days,hours,minutes);
-        } else {
+        } else if (hours > 0){
             time = String.format("%02d hours and %02d minutes",hours,minutes);
+        } else if (minutes > 0){
+            time = String.format("%02d minutes",minutes);
+        } else {
+            time = "less then a minute";
         }
 
         return "Alarm rings in " + time;
